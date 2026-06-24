@@ -84,7 +84,7 @@ def menu():
         "5": start_quiz,
     }
     while True:
-        print("\nQuizA")
+        print("\nQuiz")
         print("1. Добавить вопрос")
         print("2. Список вопросов")
         print("3. Удалить вопрос")
