@@ -19,3 +19,24 @@ def test_input_difficulty_accepts_valid_range(monkeypatch):
     for valid in [1, 2, 3, 4, 5]:
         monkeypatch.setattr("builtins.input", lambda p: str(valid))
         assert main.input_difficulty("Сложность (1-5): ") == valid
+
+def test_show_statistics_empty(capsys, monkeypatch):
+    monkeypatch.setattr("main.read_all", lambda: [])
+    main.show_statistics()
+    assert "Вопросов пока нет" in capsys.readouterr().out
+
+
+def test_show_statistics_with_data(capsys, monkeypatch):
+    from src.models import Question
+    questions = [
+        Question(1, "q1", "a1", 1, "Math"),
+        Question(2, "q2", "a2", 3, "Math"),
+        Question(3, "q3", "a3", 2, "Geo"),
+    ]
+    monkeypatch.setattr("main.read_all", lambda: questions)
+    main.show_statistics()
+    out = capsys.readouterr().out
+    assert "Всего вопросов: 3" in out
+    assert "Math: 2" in out
+    assert "Geo: 1" in out
+    assert "Средняя сложность: 2.0" in out

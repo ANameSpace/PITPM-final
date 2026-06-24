@@ -65,6 +65,29 @@ def filter_questions():
     for q in result:
         print(f"[{q.id}] {q.question}")
 
+
+def show_statistics():
+    items = read_all()
+    if not items:
+        print("Вопросов пока нет.")
+        return
+
+    total = len(items)
+    categories = {}
+    total_difficulty = 0
+
+    for q in items:
+        categories[q.category] = categories.get(q.category, 0) + 1
+        total_difficulty += q.difficulty
+
+    avg = total_difficulty / total
+
+    print(f"\nВсего вопросов: {total}")
+    print("По категориям:")
+    for cat, count in sorted(categories.items()):
+        print(f"  {cat}: {count}")
+    print(f"Средняя сложность: {avg:.1f}")
+
 def start_quiz():
     items = read_all()
     if not items:
@@ -82,6 +105,7 @@ def menu():
         "3": delete_question,
         "4": filter_questions,
         "5": start_quiz,
+        "6": show_statistics,
     }
     while True:
         print("\nQuiz")
@@ -90,6 +114,7 @@ def menu():
         print("3. Удалить вопрос")
         print("4. Фильтр")
         print("5. Викторина")
+        print("6. Статистика")
         print("0. Выход")
         choice = input("> ").strip()
         if choice == "0":
