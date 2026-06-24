@@ -10,6 +10,17 @@ def input_int(prompt: str) -> int:
         except ValueError:
             print("Введите целое число.")
 
+def input_difficulty(prompt: str) -> int:
+    """Запрос сложности с валидацией диапазона 1-5."""
+    while True:
+        try:
+            value = int(input(prompt))
+            if 1 <= value <= 5:
+                return value
+            print("Сложность должна быть от 1 до 5.")
+        except ValueError:
+            print("Введите целое число.")
+
 def input_nonempty(prompt: str) -> str:
     while True:
         val = input(prompt).strip()
@@ -20,7 +31,7 @@ def input_nonempty(prompt: str) -> str:
 def add_question():
     q_text = input_nonempty("Вопрос: ")
     a_text = input_nonempty("Ответ: ")
-    diff = input_int("Сложность (1-5): ")
+    diff = input_difficulty("Сложность (1-5): ")
     cat = input_nonempty("Категория: ")
     q = Question(0, q_text, a_text, diff, cat)
     saved = save(q)
