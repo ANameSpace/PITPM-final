@@ -65,3 +65,20 @@ def test_filter_by_difficulty(tmp_csv):
     save(Question(0, "q3", "a", 5, "Math"), tmp_csv)
     result = filter_by(read_all(tmp_csv), min_diff=2, max_diff=4)
     assert len(result) == 1
+
+def test_update_existing(tmp_csv):
+    """Обновление существующего вопроса"""
+    from src.storage import update
+    q = save(Question(0, "old", "a", 1, "Math"), tmp_csv)
+    assert update(q.id, tmp_csv, question="new", difficulty=3) is True
+    items = read_all(tmp_csv)
+    assert items[0].question == "new"
+    assert items[0].answer == "a"  # не изменилось
+    assert items[0].difficulty == 3
+    assert items[0].category == "Math"  # не изменилось
+
+
+def test_update_not_found(tmp_csv):
+    """Обновление несуществующего вопроса возвращает False"""
+    from src.storage import update
+    assert update(999, tmp_csv, question="x") is False

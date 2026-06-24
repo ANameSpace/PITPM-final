@@ -98,6 +98,41 @@ def start_quiz():
     result = run_quiz(items, count, ask_fn=lambda q: input(f"{q.question}\n> "))
     print(f"\nРезультат: {result['score']} из {result['total']}")
 
+
+def edit_question():
+    qid = input_int("ID вопроса: ")
+    items = read_all()
+    q = next((x for x in items if x.id == qid), None)
+
+    if not q:
+        print(f"Вопрос с id={qid} не найден.")
+        return
+
+    new_q = input(f"Вопрос [{q.question}]: ").strip() or q.question
+    new_a = input(f"Ответ [{q.answer}]: ").strip() or q.answer
+
+    new_d_str = input(f"Сложность [{q.difficulty}]: ").strip()
+    if new_d_str:
+        try:
+            new_d = int(new_d_str)
+            if not (1 <= new_d <= 5):
+                print("Сложность должна быть от 1 до 5. Оставлено прежнее значение.")
+                new_d = q.difficulty
+        except ValueError:
+            print("Некорректное число. Оставлено прежнее значение.")
+            new_d = q.difficulty
+    else:
+        new_d = q.difficulty
+
+    new_c = input(f"Категория [{q.category}]: ").strip() or q.category
+
+    from src.storage import update
+    # path не указываем — используется DEFAULT_PATH
+    if update(qid, question=new_q, answer=new_a, difficulty=new_d, category=new_c):
+        print("Сохранено!")
+    else:
+        print("Ошибка обновления.")
+
 def menu():
     actions = {
         "1": add_question,
@@ -106,6 +141,7 @@ def menu():
         "4": filter_questions,
         "5": start_quiz,
         "6": show_statistics,
+        "7": edit_question,
     }
     while True:
         print("\nQuiz")
@@ -115,6 +151,7 @@ def menu():
         print("4. Фильтр")
         print("5. Викторина")
         print("6. Статистика")
+        print("7. Редактировать вопрос")
         print("0. Выход")
         choice = input("> ").strip()
         if choice == "0":

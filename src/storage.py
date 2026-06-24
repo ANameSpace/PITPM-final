@@ -46,6 +46,33 @@ def save(question: Question, path: Path = DEFAULT_PATH) -> Question:
     _write_all(questions, path)
     return new_q
 
+def update(qid: int, path: Path = DEFAULT_PATH, **kwargs) -> bool:
+    """
+    Обновить поля вопроса.
+
+    Args:
+        qid: ID вопроса
+        path: путь к CSV-файлу
+        **kwargs: поля для обновления (question, answer, difficulty, category)
+
+    Returns:
+        True если обновлено, False если не найден
+    """
+    ensure_file(path)
+    questions = read_all(path)
+    for i, q in enumerate(questions):
+        if q.id == qid:
+            questions[i] = Question(
+                id=q.id,
+                question=kwargs.get("question", q.question),
+                answer=kwargs.get("answer", q.answer),
+                difficulty=kwargs.get("difficulty", q.difficulty),
+                category=kwargs.get("category", q.category),
+            )
+            _write_all(questions, path)
+            return True
+    return False
+
 def delete(qid: int, path: Path = DEFAULT_PATH) -> bool:
     ensure_file(path)
     questions = read_all(path)
